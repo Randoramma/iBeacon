@@ -3,12 +3,13 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Home View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="iBeacon_App" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="HomeViewController" customModule="iBeacon_App" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -53,6 +54,7 @@
                                 </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="iBeaconPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Wma-W1-l58"/>
+                                    <segue destination="oMh-vW-dFy" kind="show" identifier="iBeaconSegue" id="scV-es-glu"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gih-hA-epT" customClass="CustomButton" customModule="iBeacon_App" customModuleProvider="target">
@@ -81,6 +83,7 @@
                                 </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="regoinMonitorPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Eka-VR-9gV"/>
+                                    <segue destination="Fed-Ho-vrP" kind="show" identifier="regionMonitorSegue" id="YNI-pd-3qX"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -106,7 +109,75 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="398" y="371"/>
+            <point key="canvasLocation" x="68" y="202"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="YAA-jH-yy2">
+            <objects>
+                <viewController id="Fed-Ho-vrP" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="e3R-7W-1sF"/>
+                        <viewControllerLayoutGuide type="bottom" id="N1S-Tx-Oxo"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="G9H-xK-Cg0">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9nr-gL-VMZ">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="hSN-2E-soz"/>
+                                </constraints>
+                                <items>
+                                    <navigationItem title="Region Monitor" id="qfz-aZ-8XP"/>
+                                </items>
+                            </navigationBar>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="9nr-gL-VMZ" firstAttribute="top" secondItem="G9H-xK-Cg0" secondAttribute="topMargin" id="UpN-47-1e6"/>
+                            <constraint firstItem="9nr-gL-VMZ" firstAttribute="leading" secondItem="G9H-xK-Cg0" secondAttribute="leadingMargin" constant="-20" id="djv-60-Cub"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="9nr-gL-VMZ" secondAttribute="trailing" constant="-20" id="wWW-l1-ufv"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="hS2-2c-NUU" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="829" y="202"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="6Qj-1m-AZS">
+            <objects>
+                <viewController id="oMh-vW-dFy" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="xT5-Qh-fat"/>
+                        <viewControllerLayoutGuide type="bottom" id="Hrz-gL-bBa"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="BfK-n9-8f9">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0dr-kO-4nQ">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="zuQ-qE-o93"/>
+                                </constraints>
+                                <items>
+                                    <navigationItem title="iBeacon" id="FX0-17-2da"/>
+                                </items>
+                            </navigationBar>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="0dr-kO-4nQ" firstAttribute="leading" secondItem="BfK-n9-8f9" secondAttribute="leadingMargin" constant="-20" id="AAS-ff-XqI"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="0dr-kO-4nQ" secondAttribute="trailing" constant="-20" id="r2m-nq-J6v"/>
+                            <constraint firstItem="0dr-kO-4nQ" firstAttribute="top" secondItem="BfK-n9-8f9" secondAttribute="topMargin" id="u9j-Uv-xMr"/>
+                        </constraints>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="yTS-A2-iD3" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="789" y="978"/>
         </scene>
     </scenes>
 </document>

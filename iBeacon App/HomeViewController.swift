@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  HomeViewController.swift
 //  iBeacon App
 //
 //  Created by Randy McLain on 5/12/16.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class HomeViewController : UIViewController {
 
   @IBOutlet weak var titleLabel: UILabel!
   @IBOutlet weak var stateLabel: UILabel!
