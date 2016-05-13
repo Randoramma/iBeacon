@@ -10,6 +10,10 @@ import UIKit
 
 class ViewController: UIViewController {
 
+  @IBOutlet weak var titleLabel: UILabel!
+  @IBOutlet weak var stateLabel: UILabel!
+  @IBOutlet weak var regoinMonitorButton: UIButton!
+  @IBOutlet weak var iBeaconButton: UIButton!
   override func viewDidLoad() {
     super.viewDidLoad()
     // Do any additional setup after loading the view, typically from a nib.
@@ -20,6 +24,12 @@ class ViewController: UIViewController {
     // Dispose of any resources that can be recreated.
   }
 
+  @IBAction func regoinMonitorPressed(sender: AnyObject) {
+  }
+
+  @IBAction func iBeaconPressed(sender: AnyObject) {
+  }
+  
 
 }
 
