@@ -1,0 +1,5 @@
+/*
+ NSLocalizedString is used to pull string resources from a file. You can add a file to your project named Localizable.strings and define your strings there. The format is simple, one string per line:
+ */
+
+"regmon.alert.title.location-access-disabled" = "Background Location Access is Disabled";
