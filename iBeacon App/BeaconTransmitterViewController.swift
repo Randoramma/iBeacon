@@ -77,7 +77,7 @@ class BeaconTransmitterViewController: UIViewController, UITextFieldDelegate, UI
                 return
             }
             let uuid = NSUUID(UUIDString: uuidTextField.text!)
-            let identifier = "my.beacon"
+            let identifier = UIDevice.currentDevice().name
             var beaconRegion: CLBeaconRegion?
             
             if let major = Int(majorTextField.text!) {
@@ -111,7 +111,9 @@ class BeaconTransmitterViewController: UIViewController, UITextFieldDelegate, UI
             return false
         }
         if uuidTextField.text!.isEmpty || majorTextField.text!.isEmpty
-            || minorTextField.text!.isEmpty || powerTextField.text!.isEmpty {
+            || minorTextField.text!.isEmpty
+          //  || powerTextField.text!.isEmpty
+        {
             showAlert("You must complete all fields")
             return false
         }
