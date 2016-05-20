@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4E77B8D31CECE3B4009CC8FA /* BeaconTransmitterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E77B8D21CECE3B4009CC8FA /* BeaconTransmitterViewController.swift */; };
+		4E77B8D51CECE628009CC8FA /* BeaconTransmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E77B8D41CECE628009CC8FA /* BeaconTransmitter.swift */; };
 		D0BF763D1CE57AAF00CBD070 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BF763C1CE57AAF00CBD070 /* AppDelegate.swift */; };
 		D0BF763F1CE57AAF00CBD070 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0BF763E1CE57AAF00CBD070 /* HomeViewController.swift */; };
 		D0BF76421CE57AAF00CBD070 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D0BF76401CE57AAF00CBD070 /* Main.storyboard */; };
@@ -30,6 +32,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4E77B8D21CECE3B4009CC8FA /* BeaconTransmitterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconTransmitterViewController.swift; sourceTree = "<group>"; };
+		4E77B8D41CECE628009CC8FA /* BeaconTransmitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BeaconTransmitter.swift; sourceTree = "<group>"; };
 		D0BF76391CE57AAF00CBD070 /* iBeacon App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iBeacon App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0BF763C1CE57AAF00CBD070 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D0BF763E1CE57AAF00CBD070 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
@@ -92,6 +96,8 @@
 				D0BF76601CE5942700CBD070 /* RegionMonitorViewController.swift */,
 				D0BF76641CE6895000CBD070 /* Localizable.strings */,
 				D0BF76401CE57AAF00CBD070 /* Main.storyboard */,
+				4E77B8D41CECE628009CC8FA /* BeaconTransmitter.swift */,
+				4E77B8D21CECE3B4009CC8FA /* BeaconTransmitterViewController.swift */,
 				D0BF76431CE57AAF00CBD070 /* Assets.xcassets */,
 				D0BF76451CE57AAF00CBD070 /* LaunchScreen.storyboard */,
 				D0BF76481CE57AAF00CBD070 /* Info.plist */,
@@ -215,7 +221,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E77B8D31CECE3B4009CC8FA /* BeaconTransmitterViewController.swift in Sources */,
 				D0BF763F1CE57AAF00CBD070 /* HomeViewController.swift in Sources */,
+				4E77B8D51CECE628009CC8FA /* BeaconTransmitter.swift in Sources */,
 				D0BF76611CE5942700CBD070 /* RegionMonitorViewController.swift in Sources */,
 				D0BF763D1CE57AAF00CBD070 /* AppDelegate.swift in Sources */,
 				D0BF765D1CE5811A00CBD070 /* CustomButton.swift in Sources */,
@@ -350,6 +358,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "iBeacon App/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.RandyMcLain.iBeacon-App";
@@ -361,6 +370,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "iBeacon App/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.RandyMcLain.iBeacon-App";

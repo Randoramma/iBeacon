@@ -3,3 +3,8 @@
  */
 
 "regmon.alert.title.location-access-disabled" = "Background Location Access is Disabled";
+"transmit.help.proximityUUID" = "Enter help information here";
+"transmit.help.major" = "Enter major help info here";
+"transmit.help.minor" = "Enter minor help info here";
+"transmit.help.measuredPower" = "measuredPower is the RSSI (received signal strength indicator) of the device observed from one meter in its intended environment.  This value is optional, but should be specified to achieve the best ranging performance.  If not specified, it will default to a pre-determined value for the device.   RSSI is usually expressed in decibels from 0 (zero) to -120db and the closer it is to zero, the stronger the signal is. RSSI level less than -80db may not be usable, depending on noise.  This app is configured to operate on values in the positive range.  
+";

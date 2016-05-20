@@ -33,6 +33,8 @@ class RegionMonitor: NSObject, CLLocationManagerDelegate {
   var rangedRegion: CLBeacon! = CLBeacon()
   var pendingMonitorRequest: Bool = false
   
+  var count : Int = 0
+  
   
   init(delegate: RegionMonitorDelegate) {
     super.init()
@@ -69,8 +71,10 @@ class RegionMonitor: NSObject, CLLocationManagerDelegate {
   func stopMonitoring() {
     print("Stop monitoring")
     pendingMonitorRequest = false
-    locationManager.stopRangingBeaconsInRegion(beaconRegion!)
-    locationManager.stopMonitoringForRegion(beaconRegion!)
+    if let theBeacon = beaconRegion {
+        locationManager.stopRangingBeaconsInRegion(theBeacon)
+        locationManager.stopMonitoringForRegion(theBeacon)
+    }
     locationManager.stopUpdatingLocation()
     beaconRegion = nil
     delegate?.didStopMonitoring()
@@ -138,7 +142,8 @@ class RegionMonitor: NSObject, CLLocationManagerDelegate {
  
  */
   func locationManager(manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], inRegion region: CLBeaconRegion) {
-    print("didRangeBeacons - \(region.identifier)")
+    count += 1
+    print("didRangeBeacons - \(region.identifier) with count = \(count)")
     
     if beacons.count > 0 {
       let rangedBeacon = beacons[0]
