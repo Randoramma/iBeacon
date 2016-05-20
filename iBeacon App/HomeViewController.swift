@@ -17,7 +17,21 @@ class HomeViewController : UIViewController, CBCentralManagerDelegate {
   @IBOutlet weak var iBeaconButton: UIButton!
   
   var centralManager: CBCentralManager!
-  var isBluetoothPoweredOn : Bool = false
+    var isBluetoothPoweredOn : Bool {
+        var state: Bool
+        switch (centralManager.state) {
+        case .PoweredOn:
+            state = true
+            break
+        case .PoweredOff:
+            state = false
+            break
+        default:
+            state = false
+            break
+        }
+        return state 
+    }
   override func viewDidLoad() {
     super.viewDidLoad()
     
@@ -29,6 +43,8 @@ class HomeViewController : UIViewController, CBCentralManagerDelegate {
 
 
   @IBAction func regoinMonitorPressed(sender: AnyObject) {
+    
+    
   }
 
   @IBAction func iBeaconPressed(sender: AnyObject) {
@@ -59,13 +75,11 @@ class HomeViewController : UIViewController, CBCentralManagerDelegate {
    the PoweredOn state indicates that the central device supports Bluetooth LE and the Bluetooth is on and available for use. The PoweredOff state indicates that Bluetooth is either turned off or the device doesn’t support Bluetooth LE.
   */
   func centralManagerDidUpdateState(central: CBCentralManager) {
-    switch (central.state) {
-    case .PoweredOn:
-      isBluetoothPoweredOn = true
+    switch (isBluetoothPoweredOn) {
+    case true:
       stateLabel.text = "Bluetooth ON"
       stateLabel.textColor = UIColor.greenColor()
-    case .PoweredOff:
-      isBluetoothPoweredOn = false
+    case false:
       stateLabel.text = "Bluetooth OFF"
       stateLabel.textColor = UIColor.redColor()
     default:
