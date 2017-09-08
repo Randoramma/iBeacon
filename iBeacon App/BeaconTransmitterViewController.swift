@@ -9,6 +9,30 @@
 import UIKit
 import CoreLocation
 import CoreBluetooth
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
 
 class BeaconTransmitterViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate, BeaconTransmitterDelegate {
     
@@ -29,12 +53,12 @@ class BeaconTransmitterViewController: UIViewController, UITextFieldDelegate, UI
     var doneButton: UIBarButtonItem!
     var beaconTransmitter: BeaconTransmitter!
     var isBluetoothPowerOn: Bool = true
-    var defaults = NSUserDefaults.standardUserDefaults()
+    var defaults = UserDefaults.standard
     
     
     var advertise : Bool {
         get {
-        let status = defaults.boolForKey("kAdvertiseStatus")
+        let status = defaults.bool(forKey: "kAdvertiseStatus")
             return status
         }
         set (value){
@@ -42,7 +66,7 @@ class BeaconTransmitterViewController: UIViewController, UITextFieldDelegate, UI
         }
     }
     
-    let numberFormatter = NSNumberFormatter()
+    let numberFormatter = NumberFormatter()
     
     
     override func viewDidLoad() {
@@ -60,24 +84,24 @@ class BeaconTransmitterViewController: UIViewController, UITextFieldDelegate, UI
         
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         defaults.synchronize()
     }
     @IBAction func generateUUID() {
-        uuidTextField.text = NSUUID().UUIDString
-        defaults.setObject(uuidTextField.text, forKey: kUUIDKey)
+        uuidTextField.text = UUID().uuidString
+        defaults.set(uuidTextField.text, forKey: kUUIDKey)
     }
     
     @IBAction func toggleAdvertising() {
-        if advertiseSwitch.on {
+        if advertiseSwitch.isOn {
             dismissKeyboard()
             if !canBeginAdvertise() {
                 advertiseSwitch.setOn(false, animated: true)
-                defaults.setBool(false, forKey: "kAdvertiseStatus")
+                defaults.set(false, forKey: "kAdvertiseStatus")
                 return
             }
-            let uuid = NSUUID(UUIDString: uuidTextField.text!)
-            let identifier = UIDevice.currentDevice().name
+            let uuid = UUID(uuidString: uuidTextField.text!)
+            let identifier = UIDevice.current.name
             var beaconRegion: CLBeaconRegion?
             
             if let major = Int(majorTextField.text!) {
@@ -94,18 +118,18 @@ class BeaconTransmitterViewController: UIViewController, UITextFieldDelegate, UI
             beaconRegion!.notifyOnEntry = true
             beaconRegion!.notifyOnExit = true
             
-            let power = numberFormatter.numberFromString(powerTextField.text!)
+            let power = numberFormatter.number(from: powerTextField.text!)
             
             beaconTransmitter.startAdvertising(beaconRegion, power: power)
-            defaults.setBool(true, forKey: "kAdvertiseStatus")
+            defaults.set(true, forKey: "kAdvertiseStatus")
         } else {
-            defaults.setBool(false, forKey: "kAdvertiseStatus")
+            defaults.set(false, forKey: "kAdvertiseStatus")
             beaconTransmitter.stopAdvertising()
             dismissKeyboard()
         }
     }
     
-    private func canBeginAdvertise() -> Bool {
+    fileprivate func canBeginAdvertise() -> Bool {
         if !isBluetoothPowerOn {
             showAlert("You must have Bluetooth powered on to advertise!")
             return false
@@ -121,15 +145,15 @@ class BeaconTransmitterViewController: UIViewController, UITextFieldDelegate, UI
     }
     
     
-    @IBAction func backButtonPressed(sender: AnyObject) {
+    @IBAction func backButtonPressed(_ sender: AnyObject) {
         
-        self.dismissViewControllerAnimated(true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
         
     }
     
     // MARK: UITextFieldDelegate methods
     
-    func textFieldDidBeginEditing(textField: UITextField) {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
         if textField == uuidTextField {
             helpTextView.text = NSLocalizedString("transmit.help.proximityUUID", comment:"foo")
         }
@@ -144,30 +168,35 @@ class BeaconTransmitterViewController: UIViewController, UITextFieldDelegate, UI
         }
     }
     
-    func textFieldDidEndEditing(textField: UITextField) {
+    func textFieldDidEndEditing(_ textField: UITextField) {
         helpTextView.text = ""
 
         if textField == uuidTextField && !textField.text!.isEmpty {
             print (textField.text!)
-            defaults.setObject(textField.text!, forKey: kUUIDKey)
+            defaults.set(textField.text!, forKey: kUUIDKey)
         }
         else if textField == majorTextField && !textField.text!.isEmpty {
             if isMajorOrMinorEntryValid(textField.text!) {
-            defaults.setObject(textField.text, forKey: kMajorIdKey)
+            defaults.set(textField.text, forKey: kMajorIdKey)
             }
         }
         else if textField == minorTextField && !textField.text!.isEmpty {
             if isMajorOrMinorEntryValid(textField.text!) {
-                defaults.setObject(textField.text, forKey: kMinorIdKey)
+                defaults.set(textField.text, forKey: kMinorIdKey)
             }
         }
         else if textField == powerTextField && !textField.text!.isEmpty {
             // power values are typically negative
-            let value = numberFormatter.numberFromString(powerTextField.text!)
-            if (value?.intValue > 0) {
-                powerTextField.text = numberFormatter.stringFromNumber(0 - value!.intValue)
+            let value = numberFormatter.number(from: powerTextField.text!)
+            if (value?.int32Value > 0) {
+                let base: NSDecimalNumber = 0.0;
+                if let theValue: NSDecimalNumber = value as? NSDecimalNumber {
+                    let powerStrengthValue: NSDecimalNumber = base.subtracting(theValue);
+                    let calibratedString: String = powerStrengthValue.stringValue
+                    powerTextField.text = calibratedString;
+                }
             }
-            defaults.setObject(textField.text, forKey: kPowerKey)
+            defaults.set(textField.text, forKey: kPowerKey)
         }
     }
     
@@ -182,24 +211,24 @@ class BeaconTransmitterViewController: UIViewController, UITextFieldDelegate, UI
         
     }
     
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
         return false
     }
     
-    private func initFromDefaultValues() {
+    fileprivate func initFromDefaultValues() {
 
-        if let uuid = defaults.stringForKey(kUUIDKey) {
+        if let uuid = defaults.string(forKey: kUUIDKey) {
             uuidTextField.text = uuid
         }
-        if let major = defaults.stringForKey(kMajorIdKey) {
+        if let major = defaults.string(forKey: kMajorIdKey) {
             majorTextField.text = major
         }
-        if let minor = defaults.stringForKey(kMinorIdKey) {
+        if let minor = defaults.string(forKey: kMinorIdKey) {
             minorTextField.text = minor
         }
         
-        advertiseSwitch.on = advertise
+        advertiseSwitch.isOn = advertise
     }
     
     
@@ -215,7 +244,7 @@ class BeaconTransmitterViewController: UIViewController, UITextFieldDelegate, UI
         isBluetoothPowerOn = false
     }
     
-    func isMajorOrMinorEntryValid(theValue: String) -> Bool {
+    func isMajorOrMinorEntryValid(_ theValue: String) -> Bool {
         let theIntValue : Int? = Int(theValue)
         var result : Bool = false
         if let value = theIntValue {
@@ -229,14 +258,14 @@ class BeaconTransmitterViewController: UIViewController, UITextFieldDelegate, UI
         return result
     }
 
-func onError(error: NSError) {
+func onError(_ error: NSError) {
     
 }
 
-func showAlert(message: String) {
-    let alertController = UIAlertController(title:"iBeaconApp", message: message, preferredStyle: .Alert)
-    alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
-    self.presentViewController(alertController, animated: true, completion: nil)
+func showAlert(_ message: String) {
+    let alertController = UIAlertController(title:"iBeaconApp", message: message, preferredStyle: .alert)
+    alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+    self.present(alertController, animated: true, completion: nil)
 }
 
 

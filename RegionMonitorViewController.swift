@@ -33,12 +33,12 @@ class RegionMonitorViewController : UIViewController, UITextFieldDelegate, Regio
     var isMonitoring: Bool = false
     var regionMonitor: RegionMonitor!
     var doneButton: UIBarButtonItem!
-    var defaults = NSUserDefaults.standardUserDefaults()
+    var defaults = UserDefaults.standard
     /*
      Unsure how this value was derived vvv
      */
     let uuidDefault = "2F234454-CF6D-4A0F-ADF2-F4911BA9FFA6"
-    let distanceFormatter = NSLengthFormatter()
+    let distanceFormatter = LengthFormatter()
     
     
     override func viewDidLoad() {
@@ -47,10 +47,10 @@ class RegionMonitorViewController : UIViewController, UITextFieldDelegate, Regio
         majorTextField.delegate = self
         minorTextField.delegate = self
         regionMonitor = RegionMonitor(delegate: self)
-        isMonitoring = defaults.boolForKey(kMonitoringStatus)
+        isMonitoring = defaults.bool(forKey: kMonitoringStatus)
         
         
-        doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.Done, target: self, action: #selector(RegionMonitorViewController.dismissKeyboard))
+        doneButton = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.done, target: self, action: #selector(RegionMonitorViewController.dismissKeyboard))
         initFromDefaultValues()
         
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(RegionMonitorViewController.dismissKeyboard))
@@ -59,9 +59,9 @@ class RegionMonitorViewController : UIViewController, UITextFieldDelegate, Regio
     }
     
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         
-        NSUserDefaults.standardUserDefaults().synchronize()
+        UserDefaults.standard.synchronize()
     }
     
     
@@ -74,24 +74,24 @@ class RegionMonitorViewController : UIViewController, UITextFieldDelegate, Regio
     func onBackgroundLocationAccessDisabled() {
         let alertController = UIAlertController(title: NSLocalizedString("regmon.alert.title.location-access-disabled", comment: "foo"),
                                                 message: NSLocalizedString("regmon.alert.message.location-access-disabled", comment: "foo"),
-                                                preferredStyle: .Alert)
+                                                preferredStyle: .alert)
         
         alertController.addAction(UIAlertAction(title: "Cancel",
-            style: .Cancel,
+            style: .cancel,
             handler: nil))
         alertController.addAction(UIAlertAction(title: "Settings",
-            style: .Cancel,
+            style: .cancel,
             handler: { (action) in
-                if let url = NSURL(string: UIApplicationOpenSettingsURLString) {
-                    UIApplication.sharedApplication().openURL(url)
+                if let url = URL(string: UIApplicationOpenSettingsURLString) {
+                    UIApplication.shared.openURL(url)
                 }
         })
         )
-        self.presentViewController(alertController, animated: true, completion: nil)
+        self.present(alertController, animated: true, completion: nil)
     }
-    @IBAction func backButtonPressed(sender: AnyObject) {
+    @IBAction func backButtonPressed(_ sender: AnyObject) {
         
-        self.dismissViewControllerAnimated(true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
     
     @IBAction func toggleMonitoring() {
@@ -108,7 +108,7 @@ class RegionMonitorViewController : UIViewController, UITextFieldDelegate, Regio
             distanceLabel.text = ""
             rssiLabel.text = ""
             
-            if let uuid = NSUUID(UUIDString: uuidTextField.text!) {
+            if let uuid = UUID(uuidString: uuidTextField.text!) {
                 let identifier = "my.beacon"
                 
                 var beaconRegion: CLBeaconRegion?
@@ -139,23 +139,23 @@ class RegionMonitorViewController : UIViewController, UITextFieldDelegate, Regio
     //MARK:
     //MARK: UITextFieldDelegate
     
-    func textFieldDidBeginEditing(textField: UITextField) {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
         navigationItem.rightBarButtonItem = doneButton
     }
     
-    func textFieldDidEndEditing(textField: UITextField) {
+    func textFieldDidEndEditing(_ textField: UITextField) {
         
         if (textField == uuidTextField && !textField.text!.isEmpty) {
-            defaults.setObject(textField.text, forKey: kUUIDKey)
+            defaults.set(textField.text, forKey: kUUIDKey)
         }
         else if (textField == majorTextField && !textField.text!.isEmpty) {
             if isMajorOrMinorEntryValid(textField.text!) {
-                defaults.setObject(textField.text, forKey: kMajorIdKey)
+                defaults.set(textField.text, forKey: kMajorIdKey)
             }
         }
         else if (textField == minorTextField && !textField.text!.isEmpty) {
             if isMajorOrMinorEntryValid(textField.text!) {
-                defaults.setObject(textField.text, forKey: kMinorIdKey)
+                defaults.set(textField.text, forKey: kMinorIdKey)
             }
         }
         
@@ -172,24 +172,24 @@ class RegionMonitorViewController : UIViewController, UITextFieldDelegate, Regio
         
     }
     
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         self.view.endEditing(true)
         return false
     }
     
-    private func initFromDefaultValues() {
-        if let uuid = defaults.stringForKey(kUUIDKey) {
+    fileprivate func initFromDefaultValues() {
+        if let uuid = defaults.string(forKey: kUUIDKey) {
             uuidTextField.text = uuid
         }
-        if let major = defaults.stringForKey(kMajorIdKey) {
+        if let major = defaults.string(forKey: kMajorIdKey) {
             majorTextField.text = major
         }
-        if let minor = defaults.stringForKey(kMinorIdKey) {
+        if let minor = defaults.string(forKey: kMinorIdKey) {
             minorTextField.text = minor
         }
     }
     
-    func isMajorOrMinorEntryValid(theValue: String) -> Bool {
+    func isMajorOrMinorEntryValid(_ theValue: String) -> Bool {
         let theIntValue : Int? = Int(theValue)
         var result : Bool = false
         if let value = theIntValue {
@@ -213,7 +213,7 @@ class RegionMonitorViewController : UIViewController, UITextFieldDelegate, Regio
      */
     func didStartMonitoring() {
         isMonitoring = true
-        defaults.setBool(isMonitoring, forKey: kMonitoringStatus)
+        defaults.set(isMonitoring, forKey: kMonitoringStatus)
         monitorButton.rotate(0.0, toValue: CGFloat(M_PI * 2), completionDelegate: self)
         
     }
@@ -223,14 +223,14 @@ class RegionMonitorViewController : UIViewController, UITextFieldDelegate, Regio
      */
     func didStopMonitoring() {
         isMonitoring = false
-        defaults.setBool(isMonitoring, forKey: kMonitoringStatus)
+        defaults.set(isMonitoring, forKey: kMonitoringStatus)
     }
     
     /*
      The didEnterRegion delegate method is called when RegionMonitor receives the notification didEnterRegion from CLLocationManager. The CLRegion object is passed as a parameter and is provided to the delegate. The delegate can respond to this notification by providing feedback to the user.
      */
     
-    func didEnterRegion(region: CLRegion!) {
+    func didEnterRegion(_ region: CLRegion!) {
         print ("entered region")
     }
     
@@ -238,7 +238,7 @@ class RegionMonitorViewController : UIViewController, UITextFieldDelegate, Regio
      The didExitRegion delegate method is called when RegionMonitor receives the notification didExitRegion from CLLocationManager. The CLRegion object is passed as a parameter and is provided to the delegate. The delegate can respond to this notification by providing feedback to the user.
      */
     
-    func didExitRegion(region: CLRegion!) {
+    func didExitRegion(_ region: CLRegion!) {
         print ("exited region")
     }
     
@@ -246,25 +246,25 @@ class RegionMonitorViewController : UIViewController, UITextFieldDelegate, Regio
      The didRangeBeacon delegate method is called when RegionMonitor receives the notification didRangeBeacons from CLLocationManager. The RegionMonitor is passed an array of CLBeacon objects and determines which one is the closest. That CLBeacon object is provided to the delegate. The delegate can respond to this0 notification by providing feedback to the user.
      */
     
-    func didRangeBeacon(beacon: CLBeacon!, region: CLRegion!) {
+    func didRangeBeacon(_ beacon: CLBeacon!, region: CLRegion!) {
         
         regionIDLabel.text = region.identifier
-        uuidTextField.text = beacon.proximityUUID.UUIDString
+        uuidTextField.text = beacon.proximityUUID.uuidString
         majorTextField.text = "\(beacon.major)"
         minorTextField.text = "\(beacon.minor)"
         
         switch (beacon.proximity) {
-        case CLProximity.Far:
+        case CLProximity.far:
             proximityLabel.text = "Far"
-        case CLProximity.Near:
+        case CLProximity.near:
             proximityLabel.text = "Near"
-        case CLProximity.Immediate:
+        case CLProximity.immediate:
             proximityLabel.text = "Immediate"
-        case CLProximity.Unknown:
+        case CLProximity.unknown:
             proximityLabel.text = "unknown"
         }
         
-        distanceLabel.text = distanceFormatter.stringFromMeters(beacon.accuracy)
+        distanceLabel.text = distanceFormatter.string(fromMeters: beacon.accuracy)
         print(beacon.proximity.rawValue)
         rssiLabel.text = "\(beacon.rssi)"
         
@@ -273,17 +273,17 @@ class RegionMonitorViewController : UIViewController, UITextFieldDelegate, Regio
     /*
      The onError delegate method is called when RegionMonitor encounters an error. An NSError object is provided to the delegate. The delegate can respond to this notification by handling the error and/or providing feedback to the user. This notification is currently ignored by this example app.
      */
-    func onError(error: NSError) {
+    func onError(_ error: NSError) {
         
     }
     
-    func showAlert(message: String) {
-        let alertController = UIAlertController(title:"iBeaconApp", message: message, preferredStyle: .Alert)
-        alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
-        self.presentViewController(alertController, animated: true, completion: nil)
+    func showAlert(_ message: String) {
+        let alertController = UIAlertController(title:"iBeaconApp", message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        self.present(alertController, animated: true, completion: nil)
     }
     
-    override func animationDidStop(anim: CAAnimation, finished flag: Bool) {
+    func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
         if isMonitoring == true {
             // if still scanning, restart the animation
             monitorButton.rotate(0.0, toValue: CGFloat(M_PI * 2), completionDelegate: self)
@@ -295,7 +295,7 @@ class RegionMonitorViewController : UIViewController, UITextFieldDelegate, Regio
 
 extension UIView {
     
-    func rotate(fromValue: CGFloat, toValue: CGFloat, duration: CFTimeInterval = 1.0, completionDelegate: AnyObject? = nil) {
+    func rotate(_ fromValue: CGFloat, toValue: CGFloat, duration: CFTimeInterval = 1.0, completionDelegate: AnyObject? = nil) {
         
         let rotateAnimation = CABasicAnimation(keyPath: "transform.rotation")
         rotateAnimation.fromValue = fromValue
@@ -303,9 +303,9 @@ extension UIView {
         rotateAnimation.duration = duration
         
         if let delegate: AnyObject = completionDelegate {
-            rotateAnimation.delegate = delegate
+            rotateAnimation.delegate = delegate as! CAAnimationDelegate
         }
-        self.layer.addAnimation(rotateAnimation, forKey: nil)
+        self.layer.add(rotateAnimation, forKey: nil)
     }
 }
 

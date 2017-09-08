@@ -13,7 +13,7 @@ import CoreLocation
 protocol BeaconTransmitterDelegate: NSObjectProtocol {
     func didPowerOn()
     func didPowerOff()
-    func onError(error: NSError)
+    func onError(_ error: NSError)
 }
 
 
@@ -31,8 +31,8 @@ class BeaconTransmitter: NSObject, CBPeripheralManagerDelegate {
         self.delegate = delegate
     }
     
-    func startAdvertising(beaconRegion: CLBeaconRegion?, power:NSNumber?) {
-        let data = NSDictionary(dictionary: (beaconRegion?.peripheralDataWithMeasuredPower(power))!) as! [String: AnyObject]
+    func startAdvertising(_ beaconRegion: CLBeaconRegion?, power:NSNumber?) {
+        let data = NSDictionary(dictionary: (beaconRegion?.peripheralData(withMeasuredPower: power))!) as! [String: AnyObject]
         peripheralManager.startAdvertising(data)
     }
     
@@ -41,7 +41,7 @@ class BeaconTransmitter: NSObject, CBPeripheralManagerDelegate {
         peripheralManager.stopAdvertising()
     }
     
-    func peripheralManagerDidUpdateState(peripheral: CBPeripheralManager) {
+    func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
     
         
     }

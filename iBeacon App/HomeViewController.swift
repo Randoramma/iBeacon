@@ -20,10 +20,10 @@ class HomeViewController : UIViewController, CBCentralManagerDelegate {
     var isBluetoothPoweredOn : Bool {
         var state: Bool
         switch (centralManager.state) {
-        case .PoweredOn:
+        case .poweredOn:
             state = true
             break
-        case .PoweredOff:
+        case .poweredOff:
             state = false
             break
         default:
@@ -42,30 +42,30 @@ class HomeViewController : UIViewController, CBCentralManagerDelegate {
   }
 
 
-  @IBAction func regoinMonitorPressed(sender: AnyObject) {
+  @IBAction func regoinMonitorPressed(_ sender: AnyObject) {
     
     
   }
 
-  @IBAction func iBeaconPressed(sender: AnyObject) {
+  @IBAction func iBeaconPressed(_ sender: AnyObject) {
     
     
   }
   
-  private func showAlertForSettings() {
-    let alertController = UIAlertController(title: "iBeacon App", message: "Turn On Bluetooth!", preferredStyle: .Alert)
+  fileprivate func showAlertForSettings() {
+    let alertController = UIAlertController(title: "iBeacon App", message: "Turn On Bluetooth!", preferredStyle: .alert)
     
-    let cancelAction = UIAlertAction(title: "Settings", style: .Cancel) { (action) in
-      if let url = NSURL(string:UIApplicationOpenSettingsURLString) {
-        UIApplication.sharedApplication().openURL(url)
+    let cancelAction = UIAlertAction(title: "Settings", style: .cancel) { (action) in
+      if let url = URL(string:UIApplicationOpenSettingsURLString) {
+        UIApplication.shared.openURL(url)
       }
     }
     alertController.addAction(cancelAction)
     
-    let okAction = UIAlertAction(title: "OK", style: .Default, handler: nil)
+    let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
     alertController.addAction(okAction)
     
-    self.presentViewController(alertController, animated: true, completion: nil)
+    self.present(alertController, animated: true, completion: nil)
   }
   
   //MARK:
@@ -74,15 +74,14 @@ class HomeViewController : UIViewController, CBCentralManagerDelegate {
   /*
    the PoweredOn state indicates that the central device supports Bluetooth LE and the Bluetooth is on and available for use. The PoweredOff state indicates that Bluetooth is either turned off or the device doesn’t support Bluetooth LE.
   */
-  func centralManagerDidUpdateState(central: CBCentralManager) {
+  func centralManagerDidUpdateState(_ central: CBCentralManager) {
     switch (isBluetoothPoweredOn) {
     case true:
       stateLabel.text = "Bluetooth ON"
-      stateLabel.textColor = UIColor.greenColor()
+      stateLabel.textColor = UIColor.green
     case false:
       stateLabel.text = "Bluetooth OFF"
-      stateLabel.textColor = UIColor.redColor()
-    default:
+      stateLabel.textColor = UIColor.red
       break
     }
     
@@ -94,7 +93,7 @@ class HomeViewController : UIViewController, CBCentralManagerDelegate {
    In this method you’re only interested in the identifier; the sender object is for informational purposes and can be ignored here. Compare the identifier value with the constants you defined earlier. If you find a match, then check the Bluetooth state. If Bluetooth is powered on, you can allow the segue to execute by returning a value of true.
    In the case in which Bluetooth is powered off, you want to display an alert and provide an option to go to the Settings app where the Bluetooth setting can be changed.
   */
-  override func shouldPerformSegueWithIdentifier(identifier: String, sender: AnyObject?) -> Bool {
+  override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
     if identifier == "RegionMonitorSegue" || identifier == "iBeaconSegue" || identifier == "ConfigureSegue" {
       if !isBluetoothPoweredOn {
         showAlertForSettings()

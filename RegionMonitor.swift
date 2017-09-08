@@ -14,10 +14,10 @@ protocol RegionMonitorDelegate: NSObjectProtocol {
   func onBackgroundLocationAccessDisabled()
   func didStartMonitoring()
   func didStopMonitoring()
-  func didEnterRegion(region: CLRegion!)
-  func didExitRegion(region: CLRegion!)
-  func didRangeBeacon(beacon: CLBeacon!, region: CLRegion!)
-  func onError(error: NSError)
+  func didEnterRegion(_ region: CLRegion!)
+  func didExitRegion(_ region: CLRegion!)
+  func didRangeBeacon(_ beacon: CLBeacon!, region: CLRegion!)
+  func onError(_ error: NSError)
   
 }
 
@@ -48,18 +48,18 @@ class RegionMonitor: NSObject, CLLocationManagerDelegate {
    Upon entering, the property pendingMonitorRequest is set, signaling that a start monitoring request has been made. In the event that the request to start monitoring is deferred, this value will be used in a notification to determine whether startMonitoringForRegion should be called. Also, a strong reference to the beaconRegion is held so that it can be used by the delegate methods.
    */
   
-  func startMonitoring(beaconRegion: CLBeaconRegion?) {
+  func startMonitoring(_ beaconRegion: CLBeaconRegion?) {
     print("Start monitoring")
     pendingMonitorRequest = true
     self.beaconRegion = beaconRegion
     
     switch CLLocationManager.authorizationStatus() {
-    case .NotDetermined:
+    case .notDetermined:
       locationManager.requestAlwaysAuthorization()
-    case .Restricted, .Denied, .AuthorizedWhenInUse:
+    case .restricted, .denied, .authorizedWhenInUse:
       delegate?.onBackgroundLocationAccessDisabled()
-    case .AuthorizedAlways:
-      locationManager!.startMonitoringForRegion(beaconRegion!)
+    case .authorizedAlways:
+      locationManager!.startMonitoring(for: beaconRegion!)
       pendingMonitorRequest = false
     }
   }
@@ -72,8 +72,8 @@ class RegionMonitor: NSObject, CLLocationManagerDelegate {
     print("Stop monitoring")
     pendingMonitorRequest = false
     if let theBeacon = beaconRegion {
-        locationManager.stopRangingBeaconsInRegion(theBeacon)
-        locationManager.stopMonitoringForRegion(theBeacon)
+        locationManager.stopRangingBeacons(in: theBeacon)
+        locationManager.stopMonitoring(for: theBeacon)
     }
     locationManager.stopUpdatingLocation()
     beaconRegion = nil
@@ -86,11 +86,11 @@ class RegionMonitor: NSObject, CLLocationManagerDelegate {
   /*
    The location manager calls this delegate method when the authorization status for the application has changed. Consider the use case where a user taps a button to start monitoring but has not yet granted the application permission to access location services.
    */
-  func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+  func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
     print("didChangeAuthorizationStatus \(status)")
-    if status == .AuthorizedWhenInUse || status == .AuthorizedAlways {
+    if status == .authorizedWhenInUse || status == .authorizedAlways {
       if pendingMonitorRequest {
-        locationManager!.startMonitoringForRegion(beaconRegion!)
+        locationManager!.startMonitoring(for: beaconRegion!)
         pendingMonitorRequest = false
       }
       locationManager!.startUpdatingLocation()
@@ -100,30 +100,30 @@ class RegionMonitor: NSObject, CLLocationManagerDelegate {
   /*
    The location manager calls this delegate method after startMonitoringForRegion has been called, and when a new region is being monitored. The Region Monitor notifies its delegate by calling didStartMonitoring so a progress indicator can be presented to the user at the right time. At this point, the Region Monitor can ask the location manager about the new region’s state by calling requestStateForRegion with the new region object passed as a parameter.
    */
-  func locationManager(manager: CLLocationManager, didStartMonitoringForRegion region: CLRegion) {
+  func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion) {
     print("didStartMonitoringForRegion \(region.identifier)")
     delegate?.didStartMonitoring()
-    locationManager.requestStateForRegion(region)
+    locationManager.requestState(for: region)
   }
   
   /*
    The location manager calls this delegate method in response to a call to its requestStateForRegion method. The region along with its state is passed in as a parameter. The state contains a value of the CLRegionState type. The values reflect the relationship between the device and the region boundaries. The Region Monitor uses these values to determine which location manager method to call. If the device is inside the given region, then startRangingBeaconsInRegion is called; otherwise stopRangingBeaconsInRegion is called. The property beaconRegion that was set in the call to startMonitoring is passed in as a parameter.
    */
-  func locationManager(manager: CLLocationManager, didDetermineState state: CLRegionState, forRegion region: CLRegion) {
+  func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
     print("didDetermineState")
-    if state == CLRegionState.Inside {
+    if state == CLRegionState.inside {
       print(" - entered region \(region.identifier)")
-      locationManager.startRangingBeaconsInRegion(beaconRegion!)
+      locationManager.startRangingBeacons(in: beaconRegion!)
     } else {
       print(" - exited region \(region.identifier)")
-      locationManager.stopRangingBeaconsInRegion(beaconRegion!)
+      locationManager.stopRangingBeacons(in: beaconRegion!)
     }
   }
   
   /*
    The location manager calls this delegate method when the user enters the specified region. The Region Monitor notifies its delegate by calling didEnterRegion and passes the region object containing information about the region that was entered.
    */
-  func locationManager(manager: CLLocationManager, didEnterRegion region: CLRegion) {
+  func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
     print("didEnterRegion - \(region.identifier)")
     delegate?.didEnterRegion(region)
   }
@@ -132,7 +132,7 @@ class RegionMonitor: NSObject, CLLocationManagerDelegate {
  The location manager calls this delegate method when the user exits the specified region. The Region Monitor notifies its delegate by calling didExitRegion and passes the region object containing information about the region that was exited.
  
  */
-  func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
+  func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
     print("didExitRegion - \(region.identifier)")
     delegate?.didExitRegion(region)
   }
@@ -141,7 +141,7 @@ class RegionMonitor: NSObject, CLLocationManagerDelegate {
  The location manager calls this delegate method when one or more beacons become available in the specified region, or when a beacon goes out of range. This method is also called when the range of a beacon changes (i.e., getting closer or farther). The implementation here only notifies the Region Monitor’s delegate with the closest beacon.
  
  */
-  func locationManager(manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], inRegion region: CLBeaconRegion) {
+  func locationManager(_ manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], in region: CLBeaconRegion) {
     count += 1
     print("didRangeBeacons - \(region.identifier) with count = \(count)")
     
@@ -155,24 +155,27 @@ class RegionMonitor: NSObject, CLLocationManagerDelegate {
   /*
  The location manager calls this delegate method when region monitoring has failed. It passes in the region for which the error occurred and an NSError describing the error. Implementation of this method is optional but recommended.
  */
-  func locationManager(manager: CLLocationManager, monitoringDidFailForRegion region: CLRegion?, withError error: NSError) {
+  func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
     print("monitoringDidFailForRegion - \(error)")
   }
   
   /*
  The location manager calls this delegate method when registering a beacon region failed. If you receive this message, check to make sure the region object itself is valid and contains valid data.
  */
-  func locationManager(manager: CLLocationManager, rangingBeaconsDidFailForRegion region: CLBeaconRegion, withError error: NSError) {
+  func locationManager(_ manager: CLLocationManager, rangingBeaconsDidFailFor region: CLBeaconRegion, withError error: Error) {
     print("rangingBeaconsDidFailForRegion \(error)")
   }
   
   /*
   If the user denies your application’s use of the location service, this method reports a Denied error. If you receive this error, you should stop the location service. Implementation of this method is optional but recommended.
   */
-  func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
+  func locationManager(_ manager: CLLocationManager, didFailWithError error: CLError) {
     print("didFailWithError \(error)")
-    if (error.code == CLError.Denied.rawValue) {
-      stopMonitoring()
+//    if (error == CLError.Code.denied.rawValue) {
+//      stopMonitoring()
+//    }
+    if (error.errorCode == CLError.denied.rawValue) {
+        stopMonitoring()
     }
   }
   
